@@ -3,5 +3,5 @@
  * @return {number}
  */
 var maxProfit = function(prices) {
-    
+    let b=aaa
 };
