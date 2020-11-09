@@ -4,44 +4,21 @@
  * @return {boolean}
  */
 var canPartition = function (nums) {
-    function swap(a, b) {
-        let temp = nums[a]
-        nums[a] = nums[b]
-        nums[b] = temp
-    }
-    let sum = nums.reduce((prev, next) => prev + next)
-    let spilt_flag = 0
-    let sum1 = nums[0], sum2 = sum - sum1
-    while (sum1 != sum2) {
-        if (sum1 > sum2) {
-            if (spilt_flag == 0) return false
-            let min = nums[0], min_index = 0
-            for (let i = 0; i <= spilt_flag; i++) {
-                if (nums[i] < min) {
-                    min = nums[i]
-                    min_index = i
-                }
+    if(nums.length<2)return false;
+    let sum = nums.reduce((a, b) => a + b);
+    if(sum%2!=0)return false;
+    let target=sum/2;
+    let dp=[]
+    for(let i=0; i<nums.length;i++)dp.push([true])
+    dp[0][nums[0]]=true
+    for(let i=1;i<nums.length;i++){
+        for(let j = 1; j <= target; j++){
+            if(dp[i-1][j]==true||dp[i-1][j-nums[i]]==true){
+                dp[i][j]=true
             }
-            if (min_index != spilt_flag) swap(min_index, spilt_flag)
-            sum1 -= min
-            sum2 += min
-            spilt_flag--
-        } else {
-            if (spilt_flag == nums.length - 1) return false
-            let min = nums[spilt_flag + 1], min_index = spilt_flag + 1
-            for (let i = min_index; i <= nums.length - 1; i++) {
-                if (nums[i] < min) {
-                    min = nums[i]
-                    min_index = i
-                }
-            }
-            if (min_index != spilt_flag + 1) swap(min_index, spilt_flag + 1)
-            sum1 += min
-            sum2 -= min
-            spilt_flag++
         }
     }
-    return true
+    return dp[nums.length-1][target]==true
 };
-
-console.log(canPartition([20,10,9,8,8,3]))
+console.log(canPartition(
+    [1,2,3,6]))
