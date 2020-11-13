@@ -4,9 +4,6 @@
  * @return {number[]}
  */
 var sortArrayByParityII = function (A) {
-    function swap(a, b) {
-        [A[a], A[b]] = [A[b], A[a]]
-    }
     let i = 0, j = 1
     while (A[i] % 2 == 0) {
         i += 2
@@ -15,7 +12,7 @@ var sortArrayByParityII = function (A) {
         j += 2
     }
     while (i < A.length && j < A.length) {
-        swap(i, j)
+        [A[a], A[b]] = [A[b], A[a]]
         while (A[i] % 2 == 0) {
             i += 2
         }
