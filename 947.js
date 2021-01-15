@@ -1,53 +1,42 @@
-/**
- * @param {number[][]} stones
- * @return {number}
- */
-var removeStones = function (stones) {
-    let list = [];
-    for (let stone of stones) {
-        let flag = false;
-        for (let item of list) {
-            if (item[0].has(stone[0]) || item[1].has(stone[1])) {
-                item[0].add(stone[0])
-                item[1].add(stone[1])
-                flag = true;
-            }
-        }
-        if (!flag) {
-            list.push([new Set([stone[0]]), new Set([stone[1]])])
-        }
+class UnionFind {
+    constructor(n) {
+        this.count = 0;
+        this.parent = [];
     }
-    let listLength
-    do {
-        listLength=list.length;
-        for (let i = 0; i < list.length; i++) {
-            for (let j = i + 1; j < list.length; j++) {
-                let flag = false;
-                for (let item of list[j][0]) {
-                    if (list[i][0].has(item)) {
-                        flag = true
-                        break
-                    }
-                }
-                if (flag == false) {
-                    for (let item of list[j][1]) {
-                        if (list[i][1].has(item)) {
-                            flag = true
-                            break
-                        }
-                    }
-                }
-                if (flag) {
-                    for (let item of list[j][0]) {
-                        list[i][0].add(item)
-                    }
-                    for (let item of list[j][1]) {
-                        list[i][1].add(item)
-                    }
-                    list.splice(j--, 1)
-                }
-            }
+
+    find(index) {
+        if (this.parent[index] === undefined) {
+            this.parent[index] = index
+            this.count++;
         }
-    } while (listLength>list.length)
-    return stones.length - list.length
-};
+
+        if (this.parent[index] !== index) {
+            this.parent[index] = this.find(this.parent[index])
+        }
+        return this.parent[index];
+    }
+
+    union(index1, index2) {
+        let a = this.find(index1);
+        let b = this.find(index2);
+        if (a === b) return;
+        this.parent[a] = b;
+        this.count--;
+    }
+
+    getCount() {
+        return this.count;
+    }
+}
+
+let removeStones = function (stones) {
+    const n = stones.length;
+    const unionFind = new UnionFind(n)
+
+    stones.forEach((value, index) => {
+        unionFind.union(value[0] + 10001, value[1])
+    });
+
+    return n - unionFind.getCount();
+}
+
