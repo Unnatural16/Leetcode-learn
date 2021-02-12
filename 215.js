@@ -1,22 +1,102 @@
+class Heap {
+    constructor(data = []) {
+        this.data = data;
+        this.comparator = (a, b) => a-b;
+        
+        this.heapify();
+    }
+
+    heapify() {
+        if (this.size() < 2) return;
+        for (let i = 1; i < this.size(); i++) {
+        this.bubbleUp(i);
+        }
+    }
+
+    peek() {
+        if (this.size() === 0) return null;
+        return this.data[0];
+    }
+
+    offer(value) {
+        this.data.push(value);
+        this.bubbleUp(this.size() - 1);
+    }
+
+    poll() {
+        if (this.size() === 0) {
+            return null;
+        }
+        const result = this.data[0];
+        const last = this.data.pop();
+        if (this.size() !== 0) {
+            this.data[0] = last;
+            this.bubbleDown(0);
+        }
+        return result;
+    }
+
+    bubbleUp(index) {
+        while (index > 0) {
+            const parentIndex = (index - 1) >> 1;
+            if (this.comparator(this.data[index], this.data[parentIndex]) < 0) {
+                this.swap(index, parentIndex);
+                index = parentIndex;
+            } else {
+                break;
+            }
+        }
+    }
+
+    bubbleDown(index) {
+        const lastIndex = this.size() - 1;
+        while (true) {
+            const leftIndex = index * 2 + 1;
+            const rightIndex = index * 2 + 2;
+            let findIndex = index;
+            if (
+                leftIndex <= lastIndex &&
+                this.comparator(this.data[leftIndex], this.data[findIndex]) < 0
+            ) {
+                findIndex = leftIndex;
+            }
+            if (
+                rightIndex <= lastIndex &&
+                this.comparator(this.data[rightIndex], this.data[findIndex]) < 0
+            ) {
+                findIndex = rightIndex;
+            }
+            if (index !== findIndex) {
+                this.swap(index, findIndex);
+                index = findIndex;
+            } else {
+                break;
+            }
+        }
+    }
+
+    swap(index1, index2) {
+        [this.data[index1], this.data[index2]] = [this.data[index2], this.data[index1]];
+    }
+
+    size() {
+        return this.data.length;
+    }
+}
 /**
  * @param {number[]} nums
  * @param {number} k
  * @return {number}
  */
 var findKthLargest = function(nums, k) {
-    for(let i = nums.length-1; i >=0; i--){
-        let up=Math.floor(i/2)-1
-        if(nums[up]&&nums[up]<nums[i]){
-            [nums[up],nums[i]]=[nums[i],nums[up]]
+    const heap=new Heap()
+    for(let num of nums) {
+        heap.offer(num)
+        if(heap.size()>k){
+            heap.poll()
         }
     }
-    return nums
+    return heap.data[0]
 };
-function heap(nums,i){
-    return nums[i]? {
-        val:nums[i],
-        left:heap(nums,i*2+1),
-        right:heap(nums,i*2+2)
-    }:null
-}
-console.log(heap(findKthLargest([1,2,3,4,5,6,7,2,45,2,4,7,3,2]),0))
+console.log(findKthLargest([3,2,1,5,6,4],
+    2))
